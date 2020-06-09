@@ -16,5 +16,5 @@ pip install -e .
  ```python
 import gym
 import gym_fraud_detection
-env = gym.make('fraud-v0')
+env = gym.make('fraud-detection-v0')
 ```
