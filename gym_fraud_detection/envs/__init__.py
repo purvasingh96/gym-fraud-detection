@@ -1,0 +1,1 @@
+from gym_fraud_detection.envs.fraud_detection_env import FraudDetectionEnv
