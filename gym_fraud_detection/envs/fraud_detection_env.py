@@ -57,7 +57,8 @@ class FraudDetectionEnv(gym.Env):
         self.turns_max = 200
         self.cummulative_rewards = 0
         self.action = 0
-        self.state_index = 0
+        self.state_idx = 0
+        self.state = self.df_credit_card.iloc[self.state_idx, :]
 
         self.true_positives = 0
         self.true_negatives = 0
@@ -80,11 +81,9 @@ class FraudDetectionEnv(gym.Env):
 
 
 
-    def create_info_json_data(self, true_positive_rate, false_positive_rate, true_negative_rate, false_negative_rate):
+    def create_info_json_data(self, true_positive_rate, false_positive_rate):
         data_set = {"true_positive_rate" : true_positive_rate,
                     "false_positive_rate": false_positive_rate,
-                    "true_negative_rate": true_negative_rate,
-                    "false_negative_rate": false_negative_rate
                     }
         return json.dumps(data_set)
 
@@ -122,9 +121,9 @@ class FraudDetectionEnv(gym.Env):
                 """
 
         # extracting next state
-        assert self.action_space.contains(action)
+        #assert self.action_space.contains(action)
 
-        label_for_current_state = self.label_for(self.state_index)
+        label_for_current_state = self.label_for(self.state_idx)
 
         # reward
         reward = 0
@@ -148,17 +147,25 @@ class FraudDetectionEnv(gym.Env):
                 self.false_negatives += 1
                 reward -=1
 
-        if self.state_index <= self.df_credit_card.shape[0] - 2:
-            self.state_index += 1
+        if self.state_idx <= self.df_credit_card.shape[0] - 2:
+            self.state_idx += 1
 
         self.turns += 1
 
-        info = self.create_info_json_data(self.true_positives, self.false_postives, self.true_positives, self.false_negatives)
+        fpr = self.false_postives / (self.false_postives + self.true_negatives)
+        tpr = self.true_positives / (self.true_positives + self.false_negatives)
 
-        if self.turns > self.turns_max or self.state_index == (self.df_credit_card.shape[0]-1):
+        info = self.create_info_json_data(tpr, fpr)
+
+        if self.state_idx == (self.df_credit_card.shape[0]-1):
             self.episode_over = True
 
-        return self.state_index, reward, self.episode_over, info
+        print('State idx : {}'.format(self.state_idx))
+        print('Value of next_state : {}'.format(self.df_credit_card.iloc[self.state_idx, :-1].values))
+
+
+
+        return self.df_credit_card.iloc[self.state_idx, :-1].values, reward, self.episode_over, info
 
         
 
