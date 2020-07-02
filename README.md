@@ -82,5 +82,14 @@ pip install -e .
  ```python
 import gym
 import gym_fraud_detection
+import FraudDetectorAgent
 env = gym.make('fraud-detection-v0')
+
+obs = env.reset()
+agent = FraudDetectorAgent.Agent()
+while True:
+ action = agent.epsilon_greedy_action(obs)
+ next_state, reward, done, info = env.step(action)
+if done:
+  break
 ```
