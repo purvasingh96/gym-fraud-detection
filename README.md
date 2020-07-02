@@ -43,7 +43,8 @@
 
 * `gym-fraud-detection/gym_fraud_detection/envs/__init__.py` should have:
   ```python
-  from gym_fraud_detection.envs.fraud_detection_env import FraudDetectionEnv
+  from gym_fraud_detection.envs.fraud_detection_env \
+  import FraudDetectionEnv
   ```
 
 * `gym-fraud-detection/gym_fraud_detection/envs/fraud_detection_env.py` should look something like:
